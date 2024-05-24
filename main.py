@@ -135,7 +135,8 @@ if __name__ == '__main__':
             if dirs:
                 continue
             for file in files:
-                df_list.append(os.path.join(root, file))
+                if file.startswith('aof'):
+                    df_list.append(os.path.join(root, file))
     else:
         raise '请使用有效文件'
     if not df_list:
