@@ -1,0 +1,26 @@
+{
+  "river": "德州中最后一张公共牌是river",
+  "nash_range": "暂不处理",
+  "players": "玩家信息  flopInsurance是否购买领先保险 cards手牌；T为10",
+  "timestamp": "开局时间",
+  "heroIndex": "座位号次 -1代表未下场",
+  "blindLevel": "blinds跟注基本入池砝码数, straddle允许抓",
+  "turn": "发牌",
+  "reqid": "该局唯一uuid",
+  "command": null,
+  "winners": "获取筹码的玩",
+  "ev": "期望获取筹码倍数 底注的倍数",
+  "outcome": "实际结果获取筹码倍数 底注的倍数",
+  "handNumber": "操作唯一号码 桌号+局数",
+  "flop": "手里拿到的牌"
+
+
+
+
+
+
+
+  
+
+  
+}
