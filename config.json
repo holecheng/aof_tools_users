@@ -1,7 +1,8 @@
 {
-    "mode": "dev",
+    "mode": "prod",
     "db_host": "127.0.0.1",
-    "dev_data_path": "origin_files"
+    "dev_data_path": "origin_files",
+    "abs_path": "/home/ai/db/mongodb_path/data"
 }
 
 

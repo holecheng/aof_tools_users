@@ -99,9 +99,10 @@ if __name__ == '__main__':
     parser.add_argument('--player', type=str, nargs='?', help='玩家pid')
     parser.add_argument('--flop', type=str, nargs='?', help='flop保险')
     parser.add_argument('--turn', type=str, nargs='?', help='turn保险')
+    parser.add_argument('--path', type=str, nargs='?', help='文件路径')
     normal_col = ['ev_player', 'outcome_player', 'handNumber', 'card_num']  # 局内基本信息
     args = parser.parse_args()
-    start_time = end_time = player_id = flop = turn = None
+    start_time = end_time = player_id = flop = turn = path = None
     if args.time:
         start_time, end_time = args.time.strip().split(',')
         normal_col.append('timestamp')
@@ -115,6 +116,8 @@ if __name__ == '__main__':
     if args.turn:
         turn = args.turn
         normal_col.append('turn_insurance')
+    if args.path:
+        path = args.path
     df_list = []
     with open(config_path, 'r', encoding='utf-8') as file:
         config = json.load(file)
@@ -122,12 +125,19 @@ if __name__ == '__main__':
         if 'dev_data_path' not in config:
             raise '不存在本地路径'
         dir_path = file_path + os.sep + config['dev_data_path']
-        if os.path.exists(dir_path):
-            for root, dirs, files in os.walk(dir_path):
-                if dirs:
-                    raise '请将文件直接放入文件夹下，禁止放入文件夹！'
-                for file in files:
-                    df_list.append(os.path.join(root, file))
+    else:
+        if 'abs_path' not in config and not path:
+            raise '不存在有效路径'
+        else:
+            dir_path = path or config.get('mode')
+    if os.path.exists(dir_path):
+        for root, dirs, files in os.walk(dir_path):
+            if dirs:
+                continue
+            for file in files:
+                df_list.append(os.path.join(root, file))
+    else:
+        raise '请使用有效文件'
     if not df_list:
         exit()
     loop = asyncio.new_event_loop()
