@@ -13,6 +13,7 @@ from handler import TimeStrategy, get_analysis, PlayerStrategy, InsuranceStrateg
 from utils.utils import sign_blind_level
 
 file_path = os.path.dirname(os.path.abspath(__file__))
+os.chdir('/')
 
 
 def ac_to_excel(pds: pd.DataFrame, df_path, suffix='all'):
