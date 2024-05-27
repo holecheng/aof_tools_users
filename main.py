@@ -136,6 +136,8 @@ if __name__ == '__main__':
             for file in files:
                 if file.startswith('aof'):
                     df_list.append(os.path.join(root, file))
+                else:
+                    print('无效文件{}'.format(files))
     else:
         print('{}不是有效文件'.format(dir_path))
     print('执行的文件列表{}'.format(df_list))
