@@ -138,7 +138,7 @@ if __name__ == '__main__':
                 if file.startswith('aof'):
                     df_list.append(os.path.join(root, file))
     else:
-        raise '{}不是有效文件'.format(dir_path)
+        print('{}不是有效文件'.format(dir_path))
     if not df_list:
         exit()
     loop = asyncio.new_event_loop()
