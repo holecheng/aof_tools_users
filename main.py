@@ -13,7 +13,6 @@ from handler import TimeStrategy, get_analysis, PlayerStrategy, InsuranceStrateg
 from utils.utils import sign_blind_level
 
 file_path = os.path.dirname(os.path.abspath(__file__))
-os.chdir('/')
 
 
 def ac_to_excel(pds: pd.DataFrame, df_path, suffix='all'):
@@ -129,7 +128,7 @@ if __name__ == '__main__':
         if 'abs_path' not in config and not path:
             raise '不存在有效路径'
         else:
-            dir_path = path or config.get('mode')
+            dir_path = path or config.get('abs_path')
     if os.path.exists(dir_path):
         for root, dirs, files in os.walk(dir_path):
             if dirs:
@@ -139,6 +138,7 @@ if __name__ == '__main__':
                     df_list.append(os.path.join(root, file))
     else:
         print('{}不是有效文件'.format(dir_path))
+    print('执行的文件列表{}'.format(df_list))
     if not df_list:
         exit()
     loop = asyncio.new_event_loop()
