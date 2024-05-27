@@ -131,8 +131,6 @@ if __name__ == '__main__':
             dir_path = path or config.get('abs_path')
     if os.path.exists(dir_path):
         for root, dirs, files in os.walk(dir_path):
-            if dirs:
-                continue
             for file in files:
                 if file.startswith('aof'):
                     df_list.append(os.path.join(root, file))
