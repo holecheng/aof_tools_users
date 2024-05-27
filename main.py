@@ -15,7 +15,7 @@ from utils.utils import sign_blind_level
 file_path = os.path.dirname(os.path.abspath(__file__))
 
 
-def ac_to_excel(pds: pd.DataFrame, df_path, suffix='all'):
+def ac_to_excel(pds, df_path, suffix='all'):
     pds.to_excel('./output/' + os.path.basename(df_path).split('.')[0]
                  + '_' + suffix + '.xlsx', sheet_name='data', index=False)
 
