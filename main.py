@@ -151,6 +151,9 @@ if __name__ == '__main__':
     for i in range(len(results)):
         result = results[i]
         df_path = df_list[i]
+        if not result:
+            print('{}: 该文件没有返回值'.format(df_path))
+            continue
         normal_data = result.loc[:, normal_col]
         ans_data = normal_data
         if start_time or end_time:
