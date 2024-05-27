@@ -32,7 +32,6 @@ async def pd_node(path):
     with open(path) as json_file:
         pd_data = []
         pd_title = []
-        # file_buffer = json_file.readlines()
         for line in json_file:
             line = json.loads(line)
             if not pd_data:
@@ -139,7 +138,7 @@ if __name__ == '__main__':
                 if file.startswith('aof'):
                     df_list.append(os.path.join(root, file))
     else:
-        raise '请使用有效文件'
+        raise '{}不是有效文件'.format(dir_path)
     if not df_list:
         exit()
     loop = asyncio.new_event_loop()
