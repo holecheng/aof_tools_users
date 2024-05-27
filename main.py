@@ -20,73 +20,76 @@ def ac_to_excel(pds, df_path, suffix='all'):
                  + '_' + suffix + '.xlsx', sheet_name='data', index=False)
 
 
-async def pd_node(path):
+async def pd_node(node_path):
     '''
     基础功能将所有的数字以列的形式显示成excel方便进一步分析
-    :param path: 输入路径
+    :param node_path: 输入路径
     :return:hand_number_pd: 对桌号去重的pd  pd_data： 全量PD
 
     dic结构 flop_insurance 与 turn_insurance 为牌型对应的领先保险 leader_index为领先的hero_index
     '''
-    with open(path) as json_file:
-        pd_data = []
-        pd_title = []
-        for line in json_file:
-            line = json.loads(line)
-            if not pd_data:
-                pd_title = list(line.keys())
-            current_row = []
-            dic = {'card_list': [], 'pid_list': [], 'hero_index': None,
-                   'flop_insurance': None, 'turn_insurance': None, 'leader_index': None,
-                   'card_leader': False, 'pid': None, 'card': None}
-            for i in pd_title:
-                if i == 'players':
-                    players = line[i]
-                    for p in range(len(players)):
-                        player = players[p]
-                        # 有牌处理 无牌
-                        dic['card_list'].append(player.get('cards'))
-                        dic['pid_list'].append(player.get('pId'))
-                        flop_insurance = player.get('flopInsurance')
-                        turn_insurance = player.get('turnInsurance')
-                        if flop_insurance and flop_insurance[0].get('betStacks') > 0:
-                            dic['flop_insurance'] = flop_insurance[0].get('betStacks')
-                            dic['leader_index'] = int(p)
-                        if turn_insurance and turn_insurance[0].get('betStacks') > 0:
-                            dic['turn_insurance'] = turn_insurance[0].get('betStacks')
-                            dic['leader_index'] = int(p)  # todo 如果需要排除异常数据在此处理
-                if i == 'timestamp':
-                    current_row.append(datetime.datetime.fromtimestamp(line.get(i)))
-                elif i == 'blindLevel':
-                    current_row.append(sign_blind_level(line.get(i)['blinds']))
-                else:
-                    current_row.append(line.get(i))
-                if i == 'heroIndex':
-                    dic['hero_index'] = line.get(i)
-                    if line.get(i) != -1:
-                        dic['card'] = dic['card_list'][line.get(i)]
-                        dic['pid'] = dic['pid_list'][line.get(i)]
-                        if line.get(i) == dic['leader_index']:
-                            dic['card_leader'] = True
-                elif i in ['ev', 'outcome']:
-                    hero_index = dic.get('hero_index', '')
-                    dic[i] = float(line.get(i)[hero_index]) if hero_index != -1 else ''
-            card = dic.get('card')
-            if card:
-                a, b = max(card[0], card[2]), min(card[0], card[2])
-                current_row.append('%s%s' % (a, b))
-            current_row += [card, dic['ev'], dic['outcome'], dic['pid'], dic['card_leader']]
-            if dic['card_leader']:
-                current_row += [dic['turn_insurance'], dic['flop_insurance'],]
-            pd_data.append(current_row)
-        pd_data = pd_data
-        df_name = './' + os.path.basename(path).split('.')[0] + '.xlsx'
-        output = os.sep.join([file_path, 'output', df_name])
-        pd_data = pd.DataFrame(pd_data)
-        pd_data.columns = pd_title + ['card_num', 'card', 'ev_player', 'outcome_player',
-                                      'pid', 'card_leader', 'flop_insurance', 'turn_insurance']
-        pd_data.to_excel(output, sheet_name='data', index=False)
-        return pd_data
+    try:
+        with open(node_path) as json_file:
+            pd_data = []
+            pd_title = []
+            for line in json_file:
+                line = json.loads(line)
+                if not pd_data:
+                    pd_title = list(line.keys())
+                current_row = []
+                dic = {'card_list': [], 'pid_list': [], 'hero_index': None,
+                       'flop_insurance': None, 'turn_insurance': None, 'leader_index': None,
+                       'card_leader': False, 'pid': None, 'card': None}
+                for i in pd_title:
+                    if i == 'players':
+                        players = line[i]
+                        for p in range(len(players)):
+                            player = players[p]
+                            # 有牌处理 无牌
+                            dic['card_list'].append(player.get('cards'))
+                            dic['pid_list'].append(player.get('pId'))
+                            flop_insurance = player.get('flopInsurance')
+                            turn_insurance = player.get('turnInsurance')
+                            if flop_insurance and flop_insurance[0].get('betStacks') > 0:
+                                dic['flop_insurance'] = flop_insurance[0].get('betStacks')
+                                dic['leader_index'] = int(p)
+                            if turn_insurance and turn_insurance[0].get('betStacks') > 0:
+                                dic['turn_insurance'] = turn_insurance[0].get('betStacks')
+                                dic['leader_index'] = int(p)  # todo 如果需要排除异常数据在此处理
+                    if i == 'timestamp':
+                        current_row.append(datetime.datetime.fromtimestamp(line.get(i)))
+                    elif i == 'blindLevel':
+                        current_row.append(sign_blind_level(line.get(i)['blinds']))
+                    else:
+                        current_row.append(line.get(i))
+                    if i == 'heroIndex':
+                        dic['hero_index'] = line.get(i)
+                        if line.get(i) != -1:
+                            dic['card'] = dic['card_list'][line.get(i)]
+                            dic['pid'] = dic['pid_list'][line.get(i)]
+                            if line.get(i) == dic['leader_index']:
+                                dic['card_leader'] = True
+                    elif i in ['ev', 'outcome']:
+                        hero_index = dic.get('hero_index', '')
+                        dic[i] = float(line.get(i)[hero_index]) if hero_index != -1 else ''
+                card = dic.get('card')
+                if card:
+                    a, b = max(card[0], card[2]), min(card[0], card[2])
+                    current_row.append('%s%s' % (a, b))
+                current_row += [card, dic['ev'], dic['outcome'], dic['pid'], dic['card_leader']]
+                if dic['card_leader']:
+                    current_row += [dic['turn_insurance'], dic['flop_insurance'],]
+                pd_data.append(current_row)
+            pd_data = pd_data
+            df_name = './' + os.path.basename(path).split('.')[0] + '.xlsx'
+            output = os.sep.join([file_path, 'output', df_name])
+            pd_data = pd.DataFrame(pd_data)
+            pd_data.columns = pd_title + ['card_num', 'card', 'ev_player', 'outcome_player',
+                                          'pid', 'card_leader', 'flop_insurance', 'turn_insurance']
+            pd_data.to_excel(output, sheet_name='data', index=False)
+            return pd_data
+    except PermissionError:
+        print("权限不足，请检查文件权限。")
 
 
 if __name__ == '__main__':
